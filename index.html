@@ -26,6 +26,7 @@
           <button class="speed-btn" data-speed="2">2x</button>
           <button class="speed-btn active" data-speed="4">4x</button>
         </div>
+        <button id="guide-btn" class="guide-btn" aria-label="게임 설명서" title="게임 설명서">?</button>
       </header>
 
       <main class="layout">
@@ -103,6 +104,91 @@
         <div id="save-status" class="save-status"></div>
         <div class="result-actions">
           <button id="restart-btn">다시 도전</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="guide-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+      <div class="modal-card guide-card">
+        <div class="guide-header">
+          <div>
+            <p>7.2 Web</p>
+            <h2 id="guide-title">게임 설명서</h2>
+          </div>
+          <button id="close-guide-btn" class="guide-close" aria-label="설명서 닫기">×</button>
+        </div>
+
+        <div class="guide-grid">
+          <section class="guide-section">
+            <h3>목표와 패배</h3>
+            <ul>
+              <li>101라운드까지 버티면 클리어.</li>
+              <li>몬스터가 200마리 이상 쌓이면 패배.</li>
+              <li>보스 라운드는 게임 시간 기준 5분 20초 안에 처치해야 하며, 실패하면 즉시 패배.</li>
+              <li>랜덤 소환은 10M, 10킬마다 12M을 받음.</li>
+            </ul>
+          </section>
+
+          <section class="guide-section">
+            <h3>단축키</h3>
+            <dl class="shortcut-list">
+              <div><dt>D</dt><dd>랜덤 소환</dd></div>
+              <div><dt>F</dt><dd>선택 유닛 판매</dd></div>
+              <div><dt>Q</dt><dd>고스트 강화</dd></div>
+              <div><dt>W</dt><dd>드라군 강화</dd></div>
+              <div><dt>E</dt><dd>히드라 강화</dd></div>
+              <div><dt>Ctrl/Shift + 클릭</dt><dd>보유 유닛 다중 선택</dd></div>
+              <div><dt>드래그</dt><dd>선택 유닛 또는 선택 그룹 이동</dd></div>
+            </dl>
+          </section>
+
+          <section class="guide-section">
+            <h3>소환 확률</h3>
+            <div class="probability-list">
+              <span>일반 <b>50%</b></span>
+              <span>레어 <b>33.1%</b></span>
+              <span>고대 <b>10.2%</b></span>
+              <span>유물 <b>5.1%</b></span>
+              <span>서사 <b>0.8%</b></span>
+              <span>전설 <b>0.5%</b></span>
+              <span>에픽 <b>0.2%</b></span>
+              <span>신화 <b>0.08%</b></span>
+              <span>태초 <b>0.019%</b></span>
+            </div>
+          </section>
+
+          <section class="guide-section">
+            <h3>종족과 강화</h3>
+            <ul>
+              <li>종족 선택은 없고, 소환 시 고스트/드라군/히드라 중 하나가 랜덤으로 등장.</li>
+              <li>고스트는 소형에 강하고 대형에 약함.</li>
+              <li>드라군은 대형 처리에 강함.</li>
+              <li>히드라는 상성 영향이 적고 공격 속도가 빠름.</li>
+              <li>종족 강화는 해당 계열 전체 공격력을 올림.</li>
+            </ul>
+          </section>
+
+          <section class="guide-section">
+            <h3>고등급 특징</h3>
+            <ul>
+              <li>전설: 작은 스플래시 공격과 교환 도박 가능.</li>
+              <li>에픽: 종족별 마법 계열 효과와 수동 스킬.</li>
+              <li>신화: 빠른 광역 공격, 상성 페널티 무시.</li>
+              <li>태초: 전장급 스플래시를 가진 최상위 공격.</li>
+              <li>전설 이상 소환 시 등급/종족별 특수 이펙트가 발생.</li>
+            </ul>
+          </section>
+
+          <section class="guide-section">
+            <h3>교환과 기록</h3>
+            <ul>
+              <li>전설 교환: 100M, 성공률 66%, 실패 시 유닛 삭제.</li>
+              <li>신화 교환: 250M, 성공률 50%, 실패 시 유닛 삭제.</li>
+              <li>태초는 교환하지 않음.</li>
+              <li>클리어 또는 패배 후 닉네임을 입력하면 기록 저장.</li>
+              <li>랭킹은 클리어 여부, 최고 라운드, 점수, 킬 순서로 정렬.</li>
+            </ul>
+          </section>
         </div>
       </div>
     </div>

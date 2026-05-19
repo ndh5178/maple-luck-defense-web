@@ -24,6 +24,9 @@ const elements = {
   timer: qs<HTMLElement>("#timer-value"),
   timerHud: qs<HTMLElement>("#timer-hud"),
   score: qs<HTMLElement>("#score-value"),
+  guide: qs<HTMLButtonElement>("#guide-btn"),
+  guideModal: qs<HTMLElement>("#guide-modal"),
+  closeGuide: qs<HTMLButtonElement>("#close-guide-btn"),
   start: qs<HTMLButtonElement>("#start-btn"),
   summon: qs<HTMLButtonElement>("#summon-btn"),
   sell: qs<HTMLButtonElement>("#sell-btn"),
@@ -120,6 +123,11 @@ elements.refreshScores.addEventListener("click", () => void loadScores());
 elements.upgradeGhost.addEventListener("click", () => handleUpgradeClick("ghost", elements.upgradeGhost));
 elements.upgradeDragoon.addEventListener("click", () => handleUpgradeClick("dragoon", elements.upgradeDragoon));
 elements.upgradeHydra.addEventListener("click", () => handleUpgradeClick("hydra", elements.upgradeHydra));
+elements.guide.addEventListener("click", () => openGuide());
+elements.closeGuide.addEventListener("click", () => closeGuide());
+elements.guideModal.addEventListener("click", (event) => {
+  if (event.target === elements.guideModal) closeGuide();
+});
 
 document.querySelectorAll<HTMLButtonElement>(".speed-btn").forEach((button) => {
   button.addEventListener("click", () => gameApi?.setSpeed(Number(button.dataset.speed)));
@@ -135,6 +143,11 @@ document.querySelectorAll<HTMLButtonElement>("[data-reward-kind]").forEach((butt
 elements.saveScore.addEventListener("click", () => void saveScore());
 
 document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !elements.guideModal.classList.contains("hidden")) {
+    event.preventDefault();
+    closeGuide();
+    return;
+  }
   if (event.repeat || event.ctrlKey || event.metaKey || event.altKey || isTypingTarget(event.target)) return;
   const key = event.key.toLowerCase();
   if (key === "d") {
@@ -158,6 +171,16 @@ document.addEventListener("keydown", (event) => {
     handleUpgradeClick("hydra", elements.upgradeHydra);
   }
 });
+
+function openGuide(): void {
+  elements.guideModal.classList.remove("hidden");
+  elements.closeGuide.focus();
+}
+
+function closeGuide(): void {
+  elements.guideModal.classList.add("hidden");
+  elements.guide.focus();
+}
 
 function renderState(state: GameStatePayload): void {
   latestState = state;
