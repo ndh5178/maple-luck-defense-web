@@ -5,3 +5,4 @@ test-artifacts/
 .npm-cache/
 dev-server*.log
 server/scores.json
+.vercel/
