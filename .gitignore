@@ -1,0 +1,7 @@
+node_modules/
+dist/
+output/
+test-artifacts/
+.npm-cache/
+dev-server*.log
+server/scores.json

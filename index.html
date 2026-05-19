@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b1320'/%3E%3Cpath d='M7 22h18L16 6z' fill='%23facc15'/%3E%3C/svg%3E" />
+    <title>메이플 운빨 디펜스 7.2</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand">
+          <strong>메이플 운빨 디펜스</strong>
+          <span>7.2 Web</span>
+        </div>
+        <div class="hud">
+          <span>라운드 <b id="round-value">1</b></span>
+          <span>미네랄 <b id="mineral-value">0</b></span>
+          <span>킬 <b id="kills-value">0</b></span>
+          <span>몬스터 <b id="monster-value">0</b>/200</span>
+          <span id="timer-hud">시간 <b id="timer-value">--</b></span>
+          <span>점수 <b id="score-value">0</b></span>
+        </div>
+        <div class="speed-controls" aria-label="배속">
+          <button class="speed-btn" data-speed="1">1x</button>
+          <button class="speed-btn" data-speed="2">2x</button>
+          <button class="speed-btn active" data-speed="4">4x</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="game-shell">
+          <div id="game-root"></div>
+          <div id="toast-log" class="toast-log" aria-live="polite"></div>
+        </section>
+
+        <aside class="side-panel">
+          <section class="control-section primary-controls">
+            <button id="start-btn" class="command-btn primary">게임 시작</button>
+            <button id="summon-btn" class="command-btn">랜덤 소환 10M</button>
+          </section>
+
+          <section class="control-section">
+            <h2>종족 강화</h2>
+            <button id="upgrade-ghost" class="upgrade-btn ghost"></button>
+            <button id="upgrade-dragoon" class="upgrade-btn dragoon"></button>
+            <button id="upgrade-hydra" class="upgrade-btn hydra"></button>
+          </section>
+
+          <section class="control-section">
+            <h2>선택 유닛</h2>
+            <div id="selected-unit" class="selected-unit empty">선택된 유닛 없음</div>
+            <div class="target-actions">
+              <button id="focus-target-btn" class="small-btn">보스/선두 점사</button>
+              <button id="clear-target-btn" class="small-btn">점사 해제</button>
+              <button id="skill-btn" class="small-btn">스킬 사용</button>
+              <button id="exchange-btn" class="small-btn">교환 도박</button>
+            </div>
+            <button id="sell-btn" class="command-btn danger">판매</button>
+          </section>
+
+        </aside>
+      </main>
+
+      <footer class="bottom-panel">
+        <section>
+          <h2>보유 유닛</h2>
+          <div id="unit-list" class="unit-list"></div>
+        </section>
+        <section>
+          <h2>소환 로그</h2>
+          <div id="roll-log" class="roll-log"></div>
+        </section>
+        <section>
+          <h2>랭킹</h2>
+          <div id="leaderboard" class="leaderboard">서버 대기 중</div>
+          <button id="refresh-scores" class="small-btn">새로고침</button>
+        </section>
+      </footer>
+    </div>
+
+    <div id="reward-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <h2 id="reward-title">보상 선택</h2>
+        <p id="reward-desc"></p>
+        <div class="reward-actions">
+          <button data-reward-kind="ghost">고스트</button>
+          <button data-reward-kind="dragoon">드라군</button>
+          <button data-reward-kind="hydra">히드라</button>
+          <button data-reward-kind="random">랜덤</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="result-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card result-card">
+        <h2 id="result-title">결과</h2>
+        <div id="result-summary" class="result-summary"></div>
+        <div class="save-row">
+          <input id="nickname-input" maxlength="12" placeholder="닉네임" />
+          <button id="save-score-btn">기록 저장</button>
+        </div>
+        <div id="save-status" class="save-status"></div>
+        <div class="result-actions">
+          <button id="restart-btn">다시 도전</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "maple-luck-defense",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n client,server -c cyan,magenta \"vite --host 127.0.0.1 --port 5173\" \"node server/index.mjs\"",
+    "dev:client": "vite --host 127.0.0.1 --port 5173",
+    "dev:server": "node server/index.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.4.0",
+    "concurrently": "^9.1.2",
+    "express": "^4.21.2",
+    "phaser": "^3.87.0",
+    "vite": "^6.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "playwright": "^1.60.0",
+    "typescript": "^5.7.3"
+  }
+}
