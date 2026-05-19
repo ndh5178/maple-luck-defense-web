@@ -405,7 +405,8 @@ async function saveScore(): Promise<void> {
       body: JSON.stringify({ nickname, ...latestResult }),
     });
     if (!response.ok) throw new Error(await response.text());
-    elements.saveStatus.textContent = "기록 저장 완료";
+    const result = (await response.json()) as { saved?: boolean };
+    elements.saveStatus.textContent = result.saved === false ? "기존 최고 기록 유지" : "최고 기록 저장 완료";
     await loadScores();
   } catch (error) {
     elements.saveStatus.textContent = "서버 연결 실패";

@@ -34,7 +34,7 @@ async function route(request: Request): Promise<Response> {
 async function handleGet(): Promise<Response> {
   try {
     const scores = await readScores();
-    return jsonResponse(sortScores(scores).slice(0, TOP_RECORDS));
+    return jsonResponse(sortScores(keepBestScoresByNickname(scores)).slice(0, TOP_RECORDS));
   } catch (error) {
     console.error("score read failed", error);
     return jsonResponse([]);
@@ -54,9 +54,9 @@ async function handlePost(request: Request): Promise<Response> {
 
   try {
     const scores = await readScores();
-    scores.push(record);
-    await writeScores(sortScores(scores).slice(0, MAX_RECORDS));
-    return jsonResponse(record, 201);
+    const result = upsertBestScore(scores, record);
+    await writeScores(sortScores(result.scores).slice(0, MAX_RECORDS));
+    return jsonResponse({ record: result.record, saved: result.saved }, result.saved ? 201 : 200);
   } catch (error) {
     console.error("score write failed", error);
     return jsonResponse({ error: "score_storage_unavailable" }, 500);
@@ -115,13 +115,49 @@ function clampInt(value: unknown, min: number, max: number): number {
 }
 
 function sortScores(scores: ScoreRecord[]): ScoreRecord[] {
-  return [...scores].sort((a, b) => {
-    if (a.cleared !== b.cleared) return a.cleared ? -1 : 1;
-    if (a.round !== b.round) return b.round - a.round;
-    if (a.score !== b.score) return b.score - a.score;
-    if (a.kills !== b.kills) return b.kills - a.kills;
-    return String(b.createdAt).localeCompare(String(a.createdAt));
-  });
+  return [...scores].sort(compareScoreRecords);
+}
+
+function upsertBestScore(
+  scores: ScoreRecord[],
+  record: ScoreRecord,
+): { scores: ScoreRecord[]; record: ScoreRecord; saved: boolean } {
+  const bestScores = keepBestScoresByNickname([...scores, record]);
+  const recordKey = nicknameKey(record.nickname);
+  const keptRecord = bestScores.find((score) => nicknameKey(score.nickname) === recordKey) ?? record;
+
+  return {
+    scores: bestScores,
+    record: keptRecord,
+    saved: keptRecord.id === record.id,
+  };
+}
+
+function keepBestScoresByNickname(scores: ScoreRecord[]): ScoreRecord[] {
+  const bestByNickname = new Map<string, ScoreRecord>();
+
+  for (const score of scores) {
+    const key = nicknameKey(score.nickname);
+    if (!key) continue;
+    const current = bestByNickname.get(key);
+    if (!current || compareScoreRecords(score, current) < 0) {
+      bestByNickname.set(key, score);
+    }
+  }
+
+  return [...bestByNickname.values()];
+}
+
+function nicknameKey(nickname: string): string {
+  return nickname.trim().toLocaleLowerCase("ko-KR");
+}
+
+function compareScoreRecords(a: ScoreRecord, b: ScoreRecord): number {
+  if (a.cleared !== b.cleared) return a.cleared ? -1 : 1;
+  if (a.round !== b.round) return b.round - a.round;
+  if (a.score !== b.score) return b.score - a.score;
+  if (a.kills !== b.kills) return b.kills - a.kills;
+  return String(b.createdAt).localeCompare(String(a.createdAt));
 }
 
 function isScoreRecord(value: unknown): value is ScoreRecord {

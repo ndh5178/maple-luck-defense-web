@@ -24,7 +24,7 @@ app.get("/api/health", (_req, res) => {
 
 app.get("/api/scores", async (_req, res) => {
   const scores = await readScores();
-  res.json(sortScores(scores).slice(0, 50));
+  res.json(sortScores(keepBestScoresByNickname(scores)).slice(0, 50));
 });
 
 app.post("/api/scores", async (req, res) => {
@@ -35,9 +35,9 @@ app.post("/api/scores", async (req, res) => {
   }
 
   const scores = await readScores();
-  scores.push(record);
-  await writeScores(sortScores(scores).slice(0, 500));
-  res.status(201).json(record);
+  const result = upsertBestScore(scores, record);
+  await writeScores(sortScores(result.scores).slice(0, 500));
+  res.status(result.saved ? 201 : 200).json({ record: result.record, saved: result.saved });
 });
 
 app.listen(port, "127.0.0.1", () => {
@@ -94,11 +94,44 @@ function clampInt(value, min, max) {
 }
 
 function sortScores(scores) {
-  return [...scores].sort((a, b) => {
-    if (a.cleared !== b.cleared) return a.cleared ? -1 : 1;
-    if (a.round !== b.round) return b.round - a.round;
-    if (a.score !== b.score) return b.score - a.score;
-    if (a.kills !== b.kills) return b.kills - a.kills;
-    return String(b.createdAt).localeCompare(String(a.createdAt));
-  });
+  return [...scores].sort(compareScoreRecords);
+}
+
+function upsertBestScore(scores, record) {
+  const bestScores = keepBestScoresByNickname([...scores, record]);
+  const recordKey = nicknameKey(record.nickname);
+  const keptRecord = bestScores.find((score) => nicknameKey(score.nickname) === recordKey) ?? record;
+
+  return {
+    scores: bestScores,
+    record: keptRecord,
+    saved: keptRecord.id === record.id,
+  };
+}
+
+function keepBestScoresByNickname(scores) {
+  const bestByNickname = new Map();
+
+  for (const score of scores) {
+    const key = nicknameKey(score.nickname);
+    if (!key) continue;
+    const current = bestByNickname.get(key);
+    if (!current || compareScoreRecords(score, current) < 0) {
+      bestByNickname.set(key, score);
+    }
+  }
+
+  return [...bestByNickname.values()];
+}
+
+function nicknameKey(nickname) {
+  return String(nickname).trim().toLocaleLowerCase("ko-KR");
+}
+
+function compareScoreRecords(a, b) {
+  if (a.cleared !== b.cleared) return a.cleared ? -1 : 1;
+  if (a.round !== b.round) return b.round - a.round;
+  if (a.score !== b.score) return b.score - a.score;
+  if (a.kills !== b.kills) return b.kills - a.kills;
+  return String(b.createdAt).localeCompare(String(a.createdAt));
 }
